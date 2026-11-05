@@ -19,7 +19,9 @@ import {
 import { AlertCircle, RefreshCw } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('overview');
+  const urlParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+  const initialTab = urlParams?.get('tab') || 'overview';
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [backendConnected, setBackendConnected] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -103,6 +105,9 @@ export default function App() {
       });
       setFindings(data.findings || []);
       setFindingsTotal(data.total || 0);
+      if (urlParams?.get('modal') && data.findings?.length > 0) {
+        setSelectedFinding(data.findings[0]);
+      }
     } catch (err) {
       console.error('Failed to fetch findings:', err);
     }
